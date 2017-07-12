@@ -22,6 +22,8 @@ public class MoveCube : MonoBehaviour {
         rotateSpeed = 2.0f;
         //objeto inicia fora da mira
         SetGazedAt(naMira);
+        //inicia animação dos monstros
+        transform.GetComponent<Animation>().Play("move");
     }
 
     void Update() {
@@ -29,13 +31,16 @@ public class MoveCube : MonoBehaviour {
         playerPosition = playerVR.transform.localPosition;
         //pega posição do alvo (menino)
         Vector3 targetPosition = playerTY.transform.position;
-        //aumenta o y para não atravessar o chão
-        targetPosition.y = targetPosition.y + 1;
+        //mantem objetos que nao voam no chão
+        if (transform.tag != "Nao_Voa") {
+            //aumenta o y para não atravessar o chão
+            targetPosition.y = targetPosition.y + 1;
+        }
         //move objeto em direção ao alvo (menino)
         transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * velocidade);
         //rotaciona objeto para ficar olhando para o alvo (menino)
         LookAtPoint(playerTY.transform.position);
-
+        //se apertou o botao e esta na mira, acertou!
         if (Input.GetButtonDown("Fire2") && naMira) TeleportRandomly();
     }
 
@@ -53,6 +58,8 @@ public class MoveCube : MonoBehaviour {
         Vector3 direction = new Vector3(Random.Range(playerPosition.x - 10f, playerPosition.x + 10f), 
                                         Random.Range(playerPosition.y - 0.5f, playerPosition.y + 3f), 
                                         Random.Range(playerPosition.z, playerPosition.z + 10f));
+        //mantem objetos que nao voam no chão
+        if (transform.tag == "Nao_Voa") direction.y = transform.position.y;
         //sorteia nova velocidade para o objeto
         velocidade = Random.Range(0.2f, 0.8f);
         //move objeto para nova posição
