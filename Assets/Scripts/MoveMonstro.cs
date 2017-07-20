@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Collider))]
-public class MoveCube : MonoBehaviour {
+public class MoveMonstro : MonoBehaviour {
     //player da RV (jogador)
     public GameObject playerVR;
     //boneco do menino
@@ -14,7 +14,7 @@ public class MoveCube : MonoBehaviour {
     private float velocidade;
     //velocidade de rotação para suavizar o movimento
     private float rotateSpeed;
-
+    //para saber se objeto esta mirado
     private bool naMira = false;
 
     void Start() {
@@ -27,21 +27,25 @@ public class MoveCube : MonoBehaviour {
     }
 
     void Update() {
-        //pega posição do player
-        playerPosition = playerVR.transform.localPosition;
-        //pega posição do alvo (menino)
-        Vector3 targetPosition = playerTY.transform.position;
-        //mantem objetos que nao voam no chão
-        if (transform.tag != "Nao_Voa") {
-            //aumenta o y para não atravessar o chão
-            targetPosition.y = targetPosition.y + 1;
+        if (GameController.playing_monstro)
+        {
+            //pega posição do player
+            playerPosition = playerVR.transform.localPosition;
+            //pega posição do alvo (menino)
+            Vector3 targetPosition = playerTY.transform.position;
+            //mantem objetos que nao voam no chão
+            if (transform.tag != "Nao_Voa")
+            {
+                //aumenta o y para não atravessar o chão
+                targetPosition.y = targetPosition.y + 1;
+            }
+            //move objeto em direção ao alvo (menino)
+            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * velocidade);
+            //rotaciona objeto para ficar olhando para o alvo (menino)
+            LookAtPoint(playerTY.transform.position);
+            //se apertou o botao e esta na mira, acertou!
+            if (Input.GetButtonDown("Fire2") && naMira) TeleportRandomly();
         }
-        //move objeto em direção ao alvo (menino)
-        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * velocidade);
-        //rotaciona objeto para ficar olhando para o alvo (menino)
-        LookAtPoint(playerTY.transform.position);
-        //se apertou o botao e esta na mira, acertou!
-        if (Input.GetButtonDown("Fire2") && naMira) TeleportRandomly();
     }
 
     public void SetGazedAt(bool gazedAt) {
@@ -84,11 +88,11 @@ public class MoveCube : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision)
     {
-        //detecta se colidiu com o alvo (menino)
+        //detecta se o monstro colidiu com o alvo (menino)
         if (collision.gameObject.tag == "Player")
         {
             //se colidiu perde vida
-            Score.PerdeVida();
+            Score.PerdeSaude();
         }
     }
 }
