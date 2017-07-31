@@ -18,8 +18,12 @@ public class PlayerController : MonoBehaviour {
     public GameObject playerTY_head;
     public GameObject playerTY_hand;
 
+    //componentes onde se troca a cor
     private Renderer hand_Renderer;
     private Renderer head_Renderer;
+
+    //componente que emite as bolhas
+    private ParticleSystem bolhas;
 
     //velocidade que anda
     private float velocidade;
@@ -42,6 +46,11 @@ public class PlayerController : MonoBehaviour {
         //busca componentes de cor
         head_Renderer = playerTY_head.GetComponent<Renderer>();
         hand_Renderer = playerTY_hand.GetComponent<Renderer>();
+
+        //busca componente das bolhas
+        bolhas = playerVR.GetComponentInChildren<ParticleSystem>();
+        //inicia pausada a emissão de bolhas
+        bolhas.Stop();
     }
 
     // Update is called once per frame
@@ -60,12 +69,23 @@ public class PlayerController : MonoBehaviour {
 
         //chama funções dos botões
         if (Input.GetButtonDown("Fire2")) AnimaPlayerTY(anima_Dancar);
-        if (Input.GetButtonDown("Jump")) AnimaPlayerTY(anima_Pular);
+        if (Input.GetButtonDown("Jump")) AnimaPlayerTY(anima_Dancar);
         if (Input.GetButton("Vertical")  || Input.GetButton("Horizontal")) AnimaPlayerTY(anima_Correr);
         if (Input.GetButtonUp("Vertical") || Input.GetButtonUp("Horizontal")) AnimaPlayerTY(anima_Parado);
-        
+
+        if (GameController.playing_sujeira)
+        {   //atira bolhas de sabão
+            if (Input.GetButtonDown("Fire2") || Input.GetButtonDown("Jump")) bolhas.Play();
+            //para de atirar bolhas
+            if (Input.GetButtonUp("Fire2") || Input.GetButtonUp("Jump")) bolhas.Stop();
+        }
+        else
+        {
+            bolhas.Stop();
+        }
+
         if (Score.saude < 3)
-        {   //se esta doente, troca a cor
+        {   //se esta doente, pisca a cor
             //comandos para fazer transição de cores gradualmente
             float lerp = Mathf.PingPong(Time.time, duration) / duration;
             playerTY_head.GetComponent<Renderer>().material.color = Color.Lerp(cor_Saudavel, cor_Doente, lerp);
@@ -88,5 +108,10 @@ public class PlayerController : MonoBehaviour {
     {
         head_Renderer.material.color = cor;
         hand_Renderer.material.color = cor;
+    }
+
+    void AtiraBolhas ()
+    {
+
     }
 }

@@ -17,9 +17,13 @@ public class MoveMonstro : MonoBehaviour {
     //para saber se objeto esta mirado
     private bool naMira = false;
 
+    //usada quando volta do pause
+    public static bool voltou;
+
     void Start() {
         velocidade = 0.5f;
         rotateSpeed = 2.0f;
+        voltou = true;
         //objeto inicia fora da mira
         SetGazedAt(naMira);
         //inicia animação dos monstros
@@ -31,6 +35,14 @@ public class MoveMonstro : MonoBehaviour {
         {
             //pega posição do player
             playerPosition = playerVR.transform.localPosition;
+
+            //teleporta para proximo ao player quando volta do pause
+            if (voltou)
+            {
+                TeleportRandomly();
+                voltou = false;
+            }
+
             //pega posição do alvo (menino)
             Vector3 targetPosition = playerTY.transform.position;
             //mantem objetos que nao voam no chão
@@ -43,8 +55,14 @@ public class MoveMonstro : MonoBehaviour {
             transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * velocidade);
             //rotaciona objeto para ficar olhando para o alvo (menino)
             LookAtPoint(playerTY.transform.position);
+
             //se apertou o botao e esta na mira, acertou!
-            if (Input.GetButtonDown("Fire2") && naMira) TeleportRandomly();
+            if (Input.GetButtonDown("Fire2") && naMira)
+            {
+                TeleportRandomly();
+                //incrementa os pontos
+                Score.AddScore(1f);
+            }
         }
     }
 
@@ -68,8 +86,6 @@ public class MoveMonstro : MonoBehaviour {
         velocidade = Random.Range(0.2f, 0.8f);
         //move objeto para nova posição
         transform.localPosition = direction;
-        //incrementa os pontos
-        Score.AddScore(1f);
     }
 
     //faz objeto olhar na direção do alvo
