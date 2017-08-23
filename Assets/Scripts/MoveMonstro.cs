@@ -31,6 +31,8 @@ public class MoveMonstro : MonoBehaviour {
     }
 
     void Update() {
+        if (GameController.is_paused)
+            return;
         if (GameController.playing_monstro)
         {
             //pega posição do player
@@ -57,7 +59,7 @@ public class MoveMonstro : MonoBehaviour {
             LookAtPoint(playerTY.transform.position);
 
             //se apertou o botao e esta na mira, acertou!
-            if (Input.GetButtonDown("Fire2") && naMira)
+            if ((Input.GetButtonDown("Fire2") || Input.GetButtonDown("Jump")) && naMira)
             {
                 TeleportRandomly();
                 //incrementa os pontos

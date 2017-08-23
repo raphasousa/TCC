@@ -56,7 +56,7 @@ public class Score : MonoBehaviour {
         if (pontos_seguidos == 3) ResetSaude();
     }
     
-    //chamada para decrementar a quantidade de vidas
+    //chamada para decrementar a saude
     public static void PerdeSaude()
     {
         saude = saude - 1f;
@@ -64,10 +64,18 @@ public class Score : MonoBehaviour {
         pontos_seguidos = 0;
     }
 
-    //chamada para reiniciar a quantidade de vidas
+    //chamada para reiniciar a saude
     public static void ResetSaude()
     {
         saude = 3f;
+        pontos_seguidos = 0;
+    }
+
+    //chamada ao reiniciar o jogo para zerar a pontuação
+    public static void ZeraPontos()
+    {
+        saude = 3f;
+        score = 0;
         pontos_seguidos = 0;
     }
 }

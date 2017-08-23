@@ -20,8 +20,9 @@ public class MoveComida : MonoBehaviour {
         voltou = true;
     }
 
-    void Update()
-    {
+    void Update() {
+        if (GameController.is_paused)
+            return;
         if (GameController.playing_comida)
         {
             //pega posição do player

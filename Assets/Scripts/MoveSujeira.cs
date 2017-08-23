@@ -6,6 +6,7 @@ public class MoveSujeira : MonoBehaviour
 {
     //player da RV (jogador)
     public GameObject playerVR;
+
     //posição do player para gerar posição do objeto ao redor dele
     private Vector3 playerPosition;
 
@@ -14,16 +15,18 @@ public class MoveSujeira : MonoBehaviour
 
     void Start()
     {
+        //inicia sujeiras proximas ao menino
         voltou = true;
     }
 
-    void Update()
-    {
+    void Update() {
+        if (GameController.is_paused)
+            return;
         if (GameController.playing_sujeira)
         {
             //pega posição do player
             playerPosition = playerVR.transform.localPosition;
-
+            
             //teleporta para proximo ao player quando volta do pause
             if (voltou)
             {

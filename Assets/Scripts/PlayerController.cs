@@ -8,6 +8,10 @@ public class PlayerController : MonoBehaviour {
     //player da RV (jogador)
     public GameObject playerVR;
 
+    //---------------------------------------------------
+    //------------------ TROCA DE COR -------------------
+    //---------------------------------------------------
+
     //cores do menino
     private Color cor_Doente = new Color(255f / 255f, 118f / 255f, 118f / 255f, 255f / 255f); //FF7676FF - vermelho
     private Color cor_Saudavel = Color.white;
@@ -22,13 +26,25 @@ public class PlayerController : MonoBehaviour {
     private Renderer hand_Renderer;
     private Renderer head_Renderer;
 
+    //--------------------------------------------
+    //------------------ BOLHAS ------------------
+    //--------------------------------------------
+
     //componente que emite as bolhas
     private ParticleSystem bolhas;
+
+    //---------------------------------------------
+    //----------------- MOVIMENTO -----------------
+    //---------------------------------------------
 
     //velocidade que anda
     private float velocidade;
     //velocidade de giro
     private float giro;
+
+    //---------------------------------------------
+    //----------------- ANIMAÇÕES -----------------
+    //---------------------------------------------
 
     //nome das animações
     private string anima_Andar = "swagger_walk_inPlace";
@@ -37,6 +53,10 @@ public class PlayerController : MonoBehaviour {
     private string anima_Dancar = "hip_hop_dancing";
     private string anima_Morrer = "falling_back_death";
     private string anima_Parado = "neutral_idle";
+
+    //-----------------------------------------
+    //----------------- START -----------------
+    //-----------------------------------------
 
     // Use this for initialization
     void Start () {
@@ -51,10 +71,21 @@ public class PlayerController : MonoBehaviour {
         bolhas = playerVR.GetComponentInChildren<ParticleSystem>();
         //inicia pausada a emissão de bolhas
         bolhas.Stop();
+        
     }
+
+    //------------------------------------------
+    //----------------- UPDATE -----------------
+    //------------------------------------------
 
     // Update is called once per frame
     void Update() {
+        if (GameController.is_paused)
+            return;
+        //---------------------------------------------
+        //----------------- MOVIMENTO -----------------
+        //---------------------------------------------
+
         //pega valores dos botões do controle
         float v = (Input.GetAxis("Vertical") * velocidade) * Time.deltaTime;
         float h = (Input.GetAxis("Horizontal") * velocidade) * Time.deltaTime;
@@ -67,12 +98,19 @@ public class PlayerController : MonoBehaviour {
         Vector3 posCamera = new Vector3(playerTY.transform.position.x + 1.5f, 2.54f, playerTY.transform.position.z - 5f);
         playerVR.transform.position = posCamera;
 
+        //---------------------------------------------
+        //----------------- ANIMAÇÕES -----------------
+        //---------------------------------------------
+
         //chama funções dos botões
         if (Input.GetButtonDown("Fire2")) AnimaPlayerTY(anima_Dancar);
         if (Input.GetButtonDown("Jump")) AnimaPlayerTY(anima_Dancar);
         if (Input.GetButton("Vertical")  || Input.GetButton("Horizontal")) AnimaPlayerTY(anima_Correr);
         if (Input.GetButtonUp("Vertical") || Input.GetButtonUp("Horizontal")) AnimaPlayerTY(anima_Parado);
 
+        //--------------------------------------------
+        //------------------ BOLHAS ------------------
+        //--------------------------------------------
         if (GameController.playing_sujeira)
         {   //atira bolhas de sabão
             if (Input.GetButtonDown("Fire2") || Input.GetButtonDown("Jump")) bolhas.Play();
@@ -84,6 +122,9 @@ public class PlayerController : MonoBehaviour {
             bolhas.Stop();
         }
 
+        //---------------------------------------------------
+        //------------------ TROCA DE COR -------------------
+        //---------------------------------------------------
         if (Score.saude < 3)
         {   //se esta doente, pisca a cor
             //comandos para fazer transição de cores gradualmente
@@ -97,21 +138,24 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    //---------------------------------------------
+    //----------------- ANIMAÇÕES -----------------
+    //---------------------------------------------
+
     //função para tocar as animações do menino
     void AnimaPlayerTY(string nome_animacao)
     {
         playerTY.GetComponent<Animation>().Play(nome_animacao);
     }
 
+    //---------------------------------------------------
+    //------------------ TROCA DE COR -------------------
+    //---------------------------------------------------
+
     //função para trocar a cor do menino
     void TrocaCorPlayerTY (Color cor)
     {
         head_Renderer.material.color = cor;
         hand_Renderer.material.color = cor;
-    }
-
-    void AtiraBolhas ()
-    {
-
     }
 }
