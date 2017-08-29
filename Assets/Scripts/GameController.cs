@@ -8,9 +8,16 @@ public class GameController : MonoBehaviour {
     public GameObject monstros;
     public GameObject comidas;
     public GameObject sujeiras;
-    public GameObject menu;
 
-    private static GameObject menu_static;
+    //objeto de cada menu
+    public GameObject menu_pause;
+    public GameObject menu_inicio;
+    public GameObject menu_tutorial;
+
+    //copia dos menus para poder usar nas chamadas publicas
+    private static GameObject menu_pause_static;
+    private static GameObject menu_inicio_static;
+    private static GameObject menu_tutorial_static;
 
     //para saber qual fase esta em execução
     public static bool playing_monstro = false;
@@ -27,8 +34,10 @@ public class GameController : MonoBehaviour {
     private string fase_comida = "Comida";
     private string fase_sujeira = "Sujeira";
 
-    //variavel para pausar o jogo
+    //variavel para pausar o jogo, verificada em outros scripts
     public static bool is_paused;
+
+    //variavel para esperar certo tempo apos pausar, para que o pause funcione
     private bool esperando = false;
 
     //-----------------------------------------
@@ -37,8 +46,10 @@ public class GameController : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        //inicia objeto do menu
-        menu_static = menu;
+        //inicia objetos do menu
+        menu_pause_static = menu_pause;
+        menu_inicio_static = menu_inicio;
+        menu_tutorial_static = menu_tutorial;
 
         //retira todos os objetos ao iniciar jogo
         monstros.SetActive(false);
@@ -49,7 +60,7 @@ public class GameController : MonoBehaviour {
         StartCoroutine(ControlaFases());
 
         //inicia jogo pausado
-        Pausar_Jogo();
+        Show_Menu_Inicial();
     }
 
     //------------------------------------------
@@ -76,12 +87,18 @@ public class GameController : MonoBehaviour {
         if (is_paused && esperando == false)
         {
             if (Input.GetButtonDown("Jump")) //BOTAO A OU FRONTAL DE CIMA
-            {
-                BotaoReiniciar();
+            {   //MENU INICIO
+                if (menu_inicio.activeSelf) BotaoJogar();
+                //MENU PAUSE
+                else if (menu_pause.activeSelf) BotaoReiniciar();
+                //MENU TUTORIAL
+                else if (menu_tutorial.activeSelf) BotaoVoltarTutorial();
             }
             if (Input.GetButtonDown("Fire2")) //BOTAO B OU FRONTAL DE BAIXO
-            {
-                BotaoVoltar();
+            {   //MENU INICIO
+                if (menu_inicio.activeSelf) BotaoTutorial();
+                //MENU PAUSE
+                else if (menu_pause.activeSelf) BotaoVoltar();
             }
         }
     }
@@ -165,22 +182,41 @@ public class GameController : MonoBehaviour {
     }
 
     //----------------------------------------
-    //----------------- JOGO -----------------
+    //----------------- MENU -----------------
     //----------------------------------------
+
+    static void Show_Menu_Inicial()
+    {   //mostra menu inicio
+        menu_inicio_static.SetActive(true);
+        menu_pause_static.SetActive(false);
+        menu_tutorial_static.SetActive(false);
+        //pausa o jogo
+        is_paused = true;
+    }
+
+    static void Show_Menu_Tutorial()
+    {   //mostra menu tutorial
+        menu_inicio_static.SetActive(false);
+        menu_pause_static.SetActive(false);
+        menu_tutorial_static.SetActive(true);
+    }
 
     void Pausar_Jogo ()
     {   //mostra menu de pause
-        menu_static.SetActive(true);
-        //pausa o jogo
+        menu_pause_static.SetActive(true);
+        //trava o menu por alguns segundos, para o pause funcionar
         StartCoroutine(WaitSeconds());
+        //pausa o jogo
         is_paused = true;
     }
 
     static void Iniciar_Jogo()
     {   //da play no jogo
         is_paused = false;
-        //retira menu de pause
-        menu_static.SetActive(false);
+        //retira menus
+        menu_pause_static.SetActive(false);
+        menu_inicio_static.SetActive(false);
+        menu_tutorial_static.SetActive(false);
     }
 
     IEnumerator WaitSeconds ()
@@ -190,9 +226,9 @@ public class GameController : MonoBehaviour {
         esperando = false;
     }
 
-    //----------------------------------------
-    //----------------- MENU -----------------
-    //----------------------------------------
+    //------------------------------------------
+    //----------------- BOTÕES -----------------
+    //------------------------------------------
 
     public static void BotaoReiniciar()
     {
@@ -203,5 +239,20 @@ public class GameController : MonoBehaviour {
     public static void BotaoVoltar()
     {
         Iniciar_Jogo();
+    }
+
+    public static void BotaoJogar()
+    {
+        Iniciar_Jogo();
+    }
+
+    public static void BotaoTutorial()
+    {
+        Show_Menu_Tutorial();
+    }
+
+    public static void BotaoVoltarTutorial()
+    {
+        Show_Menu_Inicial();
     }
 }
