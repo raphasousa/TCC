@@ -25,9 +25,9 @@ public class GameController : MonoBehaviour {
     public static bool playing_sujeira = false;
 
     //tempo de cada fase em segundos
-    private float tempo_monstro = 30f;
-    private float tempo_comida = 30f;
-    private float tempo_sujeira = 30f;
+    private float tempo_monstro = 10f;
+    private float tempo_comida = 10f;
+    private float tempo_sujeira = 10f;
 
     //nomes das fases
     private string fase_monstro = "Monstro";
@@ -75,7 +75,7 @@ public class GameController : MonoBehaviour {
         //-----------------------------------------
 
         //se apertar os dois botoes juntos ===> PAUSE
-        if (Input.GetButtonDown("Jump") && Input.GetButtonDown("Fire2"))
+        if (Input.GetButtonDown("Jump") && Input.GetButtonDown("Fire2") || Input.GetKeyDown(KeyCode.P))
         {   //pausa o jogo
             Pausar_Jogo();
         }
