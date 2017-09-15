@@ -43,6 +43,13 @@ public class PlayerController : MonoBehaviour {
     private float giro;
 
     //---------------------------------------------
+    //------------------ REMEDIO ------------------
+    //---------------------------------------------
+
+    //copia do remedio, usado para direcionar o tiro
+    public GameObject RemedioBase;
+
+    //---------------------------------------------
     //----------------- ANIMAÇÕES -----------------
     //---------------------------------------------
 
@@ -71,7 +78,6 @@ public class PlayerController : MonoBehaviour {
         bolhas = playerVR.GetComponentInChildren<ParticleSystem>();
         //inicia pausada a emissão de bolhas
         bolhas.Stop();
-        
     }
 
     //------------------------------------------
@@ -136,6 +142,14 @@ public class PlayerController : MonoBehaviour {
         {   //se esta curado, troca a cor
             TrocaCorPlayerTY(cor_Saudavel);
         }
+
+        //---------------------------------------------------
+        //------------------ ATIRA REMEDIO ------------------
+        //---------------------------------------------------
+        if (GameController.playing_monstro)
+        {
+            if (Input.GetButtonDown("Fire2") || Input.GetButtonDown("Jump")) AtiraRemedio();
+        }
     }
 
     //---------------------------------------------
@@ -157,5 +171,34 @@ public class PlayerController : MonoBehaviour {
     {
         head_Renderer.material.color = cor;
         hand_Renderer.material.color = cor;
+    }
+
+    //---------------------------------------------------
+    //------------------ ATIRA REMEDIO ------------------
+    //---------------------------------------------------
+
+    void AtiraRemedio()
+    {
+        //velecidade do remedio
+        float velocitybala = 10f;
+
+        //instancia um clone do remedio
+        GameObject clone = (GameObject) Object.Instantiate( Resources.Load("Remedio"), 
+                                                            playerVR.transform.position, 
+                                                            playerVR.transform.rotation);
+        //nome do clone
+        clone.name = "Remedio (Clone)";
+        clone.tag = "Remedio";
+
+        //direção do tiro
+        Vector3 direc = new Vector3(RemedioBase.transform.position.x - playerVR.transform.position.x, 
+                                    RemedioBase.transform.position.y - playerVR.transform.position.y, 
+                                    RemedioBase.transform.position.z - playerVR.transform.position.z);
+        direc.Normalize();
+        direc = direc * velocitybala;
+        clone.GetComponent<Rigidbody>().velocity = playerVR.transform.TransformDirection(direc);
+
+        //destroi o clone apos x segundos
+        Destroy(clone.gameObject, 3f);
     }
 }

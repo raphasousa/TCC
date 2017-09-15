@@ -49,28 +49,26 @@ public class MoveMonstro : MonoBehaviour {
             Vector3 targetPosition = playerTY.transform.position;
             //mantem objetos que nao voam no chão
             if (transform.tag != "Nao_Voa")
-            {
-                //aumenta o y para não atravessar o chão
+            {   //aumenta o y para não atravessar o chão
                 targetPosition.y = targetPosition.y + 1;
             }
             //move objeto em direção ao alvo (menino)
             transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * velocidade);
+            //transform.position = transform.position + (targetPosition - transform.position) * Time.deltaTime * velocidade;
             //rotaciona objeto para ficar olhando para o alvo (menino)
             LookAtPoint(playerTY.transform.position);
 
             //se apertou o botao e esta na mira, acertou!
-            if ((Input.GetButtonDown("Fire2") || Input.GetButtonDown("Jump")) && naMira)
+            /*if ((Input.GetButtonDown("Fire2") || Input.GetButtonDown("Jump")) && naMira)
             {
                 TeleportRandomly();
                 //incrementa os pontos
                 Score.AddScore(1f);
-            }
+            }*/
         }
     }
 
     public void SetGazedAt(bool gazedAt) {
-        //troca cor do objeto quando esta na mira
-        GetComponent<Renderer>().material.color = gazedAt ? Color.green : Color.red;
         //seta variavel de controle
         if (gazedAt) naMira = true;
         else naMira = false;
@@ -111,6 +109,14 @@ public class MoveMonstro : MonoBehaviour {
         {
             //se colidiu perde vida
             Score.PerdeSaude();
+            TeleportRandomly();
+        }
+        //detecta se o monstro colidiu com um remedio
+        if (collision.gameObject.tag == "Remedio")
+        {
+            TeleportRandomly();
+            //incrementa os pontos
+            Score.AddScore(1f);
         }
     }
 }
