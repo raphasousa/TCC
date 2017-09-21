@@ -12,11 +12,14 @@ public class MoveSujeira : MonoBehaviour
 
     //usada quando volta do pause
     public static bool voltou;
+    int cont;
 
     void Start()
     {
         //inicia sujeiras proximas ao menino
         voltou = true;
+        cont = 0;
+        TeleportRandomly();
     }
 
     void Update() {
@@ -26,12 +29,17 @@ public class MoveSujeira : MonoBehaviour
         {
             //pega posição do player
             playerPosition = playerVR.transform.localPosition;
-            
+
             //teleporta para proximo ao player quando volta do pause
             if (voltou)
             {
+                cont += 1;
                 TeleportRandomly();
-                voltou = false;
+                if (cont == 10)
+                {
+                    cont = 0;
+                    voltou = false;
+                }
             }
         }
     }
@@ -39,8 +47,11 @@ public class MoveSujeira : MonoBehaviour
     //chamada quando acerta o alvo ou chega ao chão
     public void TeleportRandomly()
     {
+        //pega posição do player
+        playerPosition = playerVR.transform.localPosition;
         //sorteia nova posicao para o objeto ao redor do player
-        Vector3 direction = new Vector3(Random.Range(playerPosition.x - 5f, playerPosition.x + 4f), 0.8f,
+        Vector3 direction = new Vector3(Random.Range(playerPosition.x - 6f, playerPosition.x + 4f), 
+                                        0.8f,
                                         Random.Range(playerPosition.z, playerPosition.z + 7f));
 
         //move objeto para nova posição

@@ -13,11 +13,14 @@ public class MoveComida : MonoBehaviour {
 
     //usada quando volta do pause
     public static bool voltou;
+    int cont;
 
     void Start()
     {
         velocidade = 0.5f;
         voltou = true;
+        cont = 0;
+        TeleportRandomly();
     }
 
     void Update() {
@@ -31,8 +34,13 @@ public class MoveComida : MonoBehaviour {
             //teleporta para proximo ao player quando volta do pause
             if (voltou)
             {
+                cont += 1;
                 TeleportRandomly();
-                voltou = false;
+                if (cont == 12)
+                {
+                    cont = 0;
+                    voltou = false;
+                }
             }
 
             //pega posição do alvo (chao)
@@ -46,8 +54,11 @@ public class MoveComida : MonoBehaviour {
     //chamada quando acerta o alvo ou chega ao chão
     public void TeleportRandomly()
     {
+        //pega posição do player
+        playerPosition = playerVR.transform.localPosition;
         //sorteia nova posicao para o objeto ao redor do player
-        Vector3 direction = new Vector3(Random.Range(playerPosition.x - 5f, playerPosition.x + 4f), 8f,
+        Vector3 direction = new Vector3(Random.Range(playerPosition.x - 6f, playerPosition.x + 4f), 
+                                        8f,
                                         Random.Range(playerPosition.z, playerPosition.z + 7f));
 
         //sorteia nova velocidade para o objeto

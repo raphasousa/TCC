@@ -25,7 +25,7 @@ public class GameController : MonoBehaviour {
     public static bool playing_sujeira = false;
 
     //tempo de cada fase em segundos
-    private float tempo_monstro = 40f;
+    private float tempo_monstro = 5f;
     private float tempo_comida = 5f;
     private float tempo_sujeira = 5f;
 

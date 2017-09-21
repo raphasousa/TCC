@@ -19,15 +19,18 @@ public class MoveMonstro : MonoBehaviour {
 
     //usada quando volta do pause
     public static bool voltou;
+    int cont;
 
     void Start() {
         velocidade = 0.5f;
         rotateSpeed = 2.0f;
         voltou = true;
+        cont = 0;
         //objeto inicia fora da mira
         SetGazedAt(naMira);
         //inicia animação dos monstros
         transform.GetComponent<Animation>().Play("move");
+        TeleportRandomly();
     }
 
     void Update() {
@@ -41,8 +44,13 @@ public class MoveMonstro : MonoBehaviour {
             //teleporta para proximo ao player quando volta do pause
             if (voltou)
             {
+                cont += 1;
                 TeleportRandomly();
-                voltou = false;
+                if (cont == 4)
+                {
+                    cont = 0;
+                    voltou = false;
+                }
             }
 
             //pega posição do alvo (menino)
@@ -76,8 +84,10 @@ public class MoveMonstro : MonoBehaviour {
 
     //chamada quando ocorre o "click" e acerta o alvo
     public void TeleportRandomly() {
+        //pega posição do player
+        playerPosition = playerVR.transform.localPosition;
         //sorteia nova posicao para o objeto ao redor do player
-        Vector3 direction = new Vector3(Random.Range(playerPosition.x - 10f, playerPosition.x + 10f), 
+        Vector3 direction = new Vector3(Random.Range(playerPosition.x - 13f, playerPosition.x + 10f), 
                                         Random.Range(playerPosition.y - 0.5f, playerPosition.y + 3f), 
                                         Random.Range(playerPosition.z, playerPosition.z + 10f));
         //mantem objetos que nao voam no chão
